@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.web.client.HttpStatusCodeException
+import org.springframework.web.client.RestTemplate
 import java.util.UUID
 import kotlin.test.assertEquals
 
@@ -32,12 +33,13 @@ public class SendMessageControllerTest : AbstractSecuredController() {
 
     lateinit var url: String
 
-    private var rest = createResTemplate(listOf("sms-delivery"))
+    private lateinit var rest: RestTemplate
 
     @BeforeEach
     override fun setUp() {
         super.setUp()
         url = "http://localhost:$port/v1/sms/messages"
+        rest = createResTemplate(listOf("sms-delivery"))
     }
 
     @Test
