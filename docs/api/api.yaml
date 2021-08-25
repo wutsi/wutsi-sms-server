@@ -1,0 +1,149 @@
+openapi: "3.0.0"
+info:
+  title: "Wutsi SMS API"
+  description: |
+    Wutsi SMS Server. It provides the following features:
+    - Sending SMS
+    - Verifying SMS number
+  version: "1.0.0"
+
+servers:
+  - url: https://wutsi-sms-server-test.herokuapp.com
+    description: Sandbox
+  - url: https://wutsi-sms-server-prod.herokuapp.com
+    description: Production
+
+paths:
+  /v1/sms/messages:
+    post:
+      operationId: "send-message"
+      description: Sends a SMS Message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendMessageResponse'
+        409:
+          description: SMS delivery failed
+      tags:
+        - Message
+      security:
+        - api_key: [ 'sms-delivery' ]
+
+  /v1/sms/verifications:
+    post:
+      operationId: "send-verification"
+      description: Send a verification message to a SMS number. Each verification sent expires in 5 minutes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendVerificationRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendVerificationResponse'
+        409:
+          description: SMS delivery failed
+      tags:
+        - Verification
+      security:
+        - api_key: [ 'sms-verification' ]
+
+  /v1/sms/verifications/{id}:
+    get:
+      operationId: "validate-verification"
+      description: Validate a verification
+      parameters:
+        - in: path
+          name: id
+          description: ID of the key
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: code
+          description: verification code
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Validation is successfull
+        404:
+          description: Verification not found
+        409:
+          description: |
+            Validation failed failed. The verification will fail when
+            - The code provided is invalid
+            - The verification has expired
+      tags:
+        - Verification
+      security:
+        - api_key: [ 'sms-verification' ]
+
+
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      in: header
+      name: Authorization
+
+  schemas:
+    SendMessageRequest:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+          description: |
+            Phone number in the [E164](https://en.wikipedia.org/wiki/E.164) format
+        message:
+          type: string
+          description: Message to send. A SMS message can contains up to 160 characters
+          maxLength: 160
+      required:
+        - number
+        - message
+
+    SendMessageResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Message unique identifier
+
+    SendVerificationRequest:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+          description: |
+            Phone number in the [E164](https://en.wikipedia.org/wiki/E.164) format
+        locale:
+          type: string
+          description: Locale of the message to send to user
+      required:
+        - number
+
+    SendVerificationResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Verification message identifier
+
