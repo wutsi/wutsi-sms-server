@@ -11,9 +11,15 @@ spring:
     password: ${SPRING_DATABASE_PASSWORD}
 
 wutsi:
+  application:
+    sms:
+      gateway:
+        type: aws
+        aws:
+          region: us-east-1
   platform:
     security:
-      api-key: ${API_KEY}
+      type: "jwt"
     stream:
       rabbitmq:
         url: ${CLOUDAMQP_URL}

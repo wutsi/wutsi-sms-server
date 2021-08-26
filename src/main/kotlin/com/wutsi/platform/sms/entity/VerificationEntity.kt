@@ -24,5 +24,6 @@ data class VerificationEntity(
 
     val created: OffsetDateTime = OffsetDateTime.now(),
     val expires: OffsetDateTime = OffsetDateTime.now().plusMinutes(5),
-    var verified: OffsetDateTime? = null
+    var verified: OffsetDateTime? = null,
+    var messageId: String? = null
 )

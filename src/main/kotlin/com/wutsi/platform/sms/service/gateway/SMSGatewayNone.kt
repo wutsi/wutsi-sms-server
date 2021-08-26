@@ -8,8 +8,8 @@ class SMSGatewayNone : SMSGateway {
         private val LOGGER = LoggerFactory.getLogger(SMSGatewayNone::class.java)
     }
 
-    override fun send(number: String, message: String): String {
-        LOGGER.info("To: $number \n$message")
+    override fun send(phoneNumber: String, message: String): String {
+        LOGGER.info("To: $phoneNumber \n$message")
         return UUID.randomUUID().toString()
     }
 }

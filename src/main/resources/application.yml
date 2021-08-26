@@ -68,8 +68,6 @@ wutsi:
   platform:
     security:
       type: "jwt"
-      api-key: 00000
-      secured-endpoints: POST /v1/sms/messages, POST /v1/sms/verifications, GET /v1/sms/verifications
     cache:
       type: local
     stream:
