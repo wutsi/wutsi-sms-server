@@ -9,7 +9,7 @@ class SMSGatewayNone : SMSGateway {
     }
 
     override fun send(phoneNumber: String, message: String): String {
-        LOGGER.info("To: $phoneNumber \n$message")
+        LOGGER.info("Sending SMS to $phoneNumber\n$message")
         return UUID.randomUUID().toString()
     }
 }

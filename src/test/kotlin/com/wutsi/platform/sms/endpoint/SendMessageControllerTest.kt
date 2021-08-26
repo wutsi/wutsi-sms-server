@@ -59,20 +59,6 @@ public class SendMessageControllerTest : AbstractSecuredController() {
     }
 
     @Test
-    fun `send message with invalid permission`() {
-        val request = SendMessageRequest(
-            phoneNumber = "+23774511111",
-            message = "Hello world"
-        )
-        rest = createResTemplate(listOf("bad-scope"))
-        val ex = assertThrows<HttpStatusCodeException> {
-            rest.postForEntity(url, request, SendMessageResponse::class.java)
-        }
-
-        assertEquals(403, ex.rawStatusCode)
-    }
-
-    @Test
     fun `send message with invalid phone number`() {
         val request = SendMessageRequest(
             phoneNumber = "1111",
@@ -104,5 +90,33 @@ public class SendMessageControllerTest : AbstractSecuredController() {
 
         val response = ObjectMapper().readValue(ex.responseBodyAsByteArray, ErrorResponse::class.java)
         assertEquals(ErrorURN.DELIVERY_FAILED.urn, response.error.code)
+    }
+
+    @Test
+    fun `send message with invalid permission`() {
+        val request = SendMessageRequest(
+            phoneNumber = "+23774511111",
+            message = "Hello world"
+        )
+        rest = createResTemplate(listOf("bad-scope"))
+        val ex = assertThrows<HttpStatusCodeException> {
+            rest.postForEntity(url, request, SendMessageResponse::class.java)
+        }
+
+        assertEquals(403, ex.rawStatusCode)
+    }
+
+    @Test
+    fun `send message with unauthenticated`() {
+        val request = SendMessageRequest(
+            phoneNumber = "+23774511111",
+            message = "Hello world"
+        )
+        rest = RestTemplate()
+        val ex = assertThrows<HttpStatusCodeException> {
+            rest.postForEntity(url, request, SendMessageResponse::class.java)
+        }
+
+        assertEquals(401, ex.rawStatusCode)
     }
 }
