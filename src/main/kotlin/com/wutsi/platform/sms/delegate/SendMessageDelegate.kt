@@ -8,6 +8,7 @@ import com.wutsi.platform.core.error.Parameter
 import com.wutsi.platform.core.error.ParameterType.PARAMETER_TYPE_PAYLOAD
 import com.wutsi.platform.core.error.exception.BadRequestException
 import com.wutsi.platform.core.error.exception.ConflictException
+import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.sms.dto.SendMessageRequest
 import com.wutsi.platform.sms.dto.SendMessageResponse
 import com.wutsi.platform.sms.service.gateway.SMSException
@@ -17,17 +18,23 @@ import org.springframework.stereotype.Service
 
 @Service
 public class SendMessageDelegate(
-    private val gateway: SMSGateway
+    private val gateway: SMSGateway,
+    private val logger: KVLogger
 ) {
     public fun invoke(request: SendMessageRequest): SendMessageResponse {
+        logger.add("sms_phone_number", request.phoneNumber)
+
         try {
             val util = PhoneNumberUtil.getInstance()
             val phoneNumber = util.parse(request.phoneNumber, "")
+            val messageId = gateway.send(
+                phoneNumber = util.format(phoneNumber, E164),
+                message = request.message
+            )
+
+            logger.add("sms_message_id", messageId)
             return SendMessageResponse(
-                id = gateway.send(
-                    phoneNumber = util.format(phoneNumber, E164),
-                    message = request.message
-                )
+                id = messageId
             )
         } catch (ex: NumberParseException) {
             throw BadRequestException(
