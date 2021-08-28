@@ -33,6 +33,7 @@ public class SendMessageDelegate(
             throw BadRequestException(
                 error = Error(
                     code = ErrorURN.PHONE_NUMBER_MALFORMED.urn,
+                    message = ex.message,
                     parameter = Parameter(
                         name = "phoneNumber",
                         type = PARAMETER_TYPE_PAYLOAD,
@@ -45,6 +46,7 @@ public class SendMessageDelegate(
             throw ConflictException(
                 error = Error(
                     code = ErrorURN.DELIVERY_FAILED.urn,
+                    message = ex.message,
                     downstreamCode = ex.code,
                     downstreamMessage = ex.details
                 ),

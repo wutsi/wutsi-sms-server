@@ -1,6 +1,7 @@
 package com.wutsi.platform.sms.service.gateway
 
 import com.amazonaws.services.sns.AmazonSNS
+import com.amazonaws.services.sns.model.MessageAttributeValue
 import com.amazonaws.services.sns.model.PublishRequest
 import com.amazonaws.services.sns.model.PublishResult
 import org.slf4j.LoggerFactory
@@ -19,7 +20,13 @@ class SMSGatewayAWS(
                 PublishRequest()
                     .withMessage(message)
                     .withPhoneNumber(phoneNumber)
-                    .withMessageAttributes(emptyMap())
+                    .withMessageAttributes(
+                        mapOf(
+                            "AWS.SNS.SMS.SMSType" to MessageAttributeValue()
+                                .withStringValue("Transactional")
+                                .withDataType("String")
+                        )
+                    )
             )
             return result.messageId
         } catch (ex: Exception) {

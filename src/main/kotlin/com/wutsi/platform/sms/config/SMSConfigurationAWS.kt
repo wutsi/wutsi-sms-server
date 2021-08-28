@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration
     matchIfMissing = true
 )
 public class SMSConfigurationAWS(
-    @Value("\${wutsi.application.sms.gateway.aws.region") private val region: String
+    @Value("\${wutsi.application.sms.gateway.aws.region}") private val region: String
 ) {
     @Bean
     fun amazonSNS(): AmazonSNS =
