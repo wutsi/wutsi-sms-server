@@ -27,7 +27,7 @@ public class SendVerificationController(
     private val `delegate`: SendVerificationDelegate
 ) {
     @PostMapping("/v1/sms/verifications")
-    @PreAuthorize(value = "hasAuthority('sms-verification')")
+    @PreAuthorize(value = "hasAuthority('sms-verify')")
     public fun invoke(@Valid @RequestBody request: SendVerificationRequest): SendVerificationResponse =
         delegate.invoke(request)
 }

@@ -40,7 +40,7 @@ public class SendVerificationControllerTest : AbstractSecuredController() {
     @MockBean
     lateinit var eventStream: EventStream
 
-    var rest = createResTemplate(listOf("sms-verification"))
+    var rest = createResTemplate(listOf("sms-verify"))
 
     @BeforeEach
     override fun setUp() {
@@ -52,14 +52,14 @@ public class SendVerificationControllerTest : AbstractSecuredController() {
     public fun `send verification request`() {
         val request = SendVerificationRequest(
             phoneNumber = "+23774511111",
-            locale = "en"
+            language = "en"
         )
         val response = rest.postForEntity(url, request, SendVerificationResponse::class.java)
 
         assertEquals(200, response.statusCodeValue)
         val obj = dao.findById(response.body.id).get()
         assertEquals(request.phoneNumber, obj.phoneNumber)
-        assertEquals(request.locale, obj.language)
+        assertEquals(request.language, obj.language)
         assertTrue(obj.code.length == 6)
         assertNotNull(obj.created)
         assertEquals(VerificationStatus.VERIFICATION_STATUS_PENDING, obj.status)
@@ -73,7 +73,7 @@ public class SendVerificationControllerTest : AbstractSecuredController() {
     public fun `send verification request with invalid number`() {
         val request = SendVerificationRequest(
             phoneNumber = "00000",
-            locale = "en"
+            language = "en"
         )
         val ex = assertThrows<HttpStatusCodeException> {
             rest.postForEntity(url, request, SendMessageResponse::class.java)
@@ -89,7 +89,7 @@ public class SendVerificationControllerTest : AbstractSecuredController() {
     public fun `send verification request with invalid scope`() {
         val request = SendVerificationRequest(
             phoneNumber = "+23774511111",
-            locale = "en"
+            language = "en"
         )
 
         rest = createResTemplate(listOf("xxx"))

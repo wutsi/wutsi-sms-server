@@ -29,7 +29,7 @@ public class ValidateVerificationController(
     private val `delegate`: ValidateVerificationDelegate
 ) {
     @GetMapping("/v1/sms/verifications/{id}")
-    @PreAuthorize(value = "hasAuthority('sms-verification')")
+    @PreAuthorize(value = "hasAuthority('sms-verify')")
     public fun invoke(
         @PathVariable(name = "id") @NotNull id: Long,
         @RequestParam(

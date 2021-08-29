@@ -31,7 +31,7 @@ public class SendVerificationDelegate(
             val verification = dao.save(
                 VerificationEntity(
                     phoneNumber = util.format(phoneNumber, E164),
-                    language = request.locale,
+                    language = request.language,
                     code = (Math.random() * 1000000).toLong().toString(),
                     status = VerificationStatus.VERIFICATION_STATUS_PENDING,
                     created = OffsetDateTime.now(),

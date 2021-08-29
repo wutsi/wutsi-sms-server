@@ -27,7 +27,7 @@ public class SendMessageController(
     private val `delegate`: SendMessageDelegate
 ) {
     @PostMapping("/v1/sms/messages")
-    @PreAuthorize(value = "hasAuthority('sms-delivery')")
+    @PreAuthorize(value = "hasAuthority('sms-send')")
     public fun invoke(@Valid @RequestBody request: SendMessageRequest): SendMessageResponse =
         delegate.invoke(request)
 }

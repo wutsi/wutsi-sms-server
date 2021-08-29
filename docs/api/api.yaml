@@ -36,7 +36,7 @@ paths:
       tags:
         - Message
       security:
-        - api_key: [ 'sms-delivery' ]
+        - api_key: [ 'sms-send' ]
 
   /v1/sms/verifications:
     post:
@@ -60,7 +60,7 @@ paths:
       tags:
         - Verification
       security:
-        - api_key: [ 'sms-verification' ]
+        - api_key: [ 'sms-verify' ]
 
   /v1/sms/verifications/{id}:
     get:
@@ -69,7 +69,7 @@ paths:
       parameters:
         - in: path
           name: id
-          description: ID of the key
+          description: ID of the verification request
           required: true
           schema:
             type: integer
@@ -83,17 +83,17 @@ paths:
       responses:
         200:
           description: Validation is successfull
-        404:
-          description: Verification not found
         409:
           description: |
             Validation failed failed. The verification will fail when
+            - The ID of the verification request is invalid
             - The code provided is invalid
             - The verification has expired
+            - The verification has already been verified
       tags:
         - Verification
       security:
-        - api_key: [ 'sms-verification' ]
+        - api_key: [ 'sms-verify' ]
 
 
 components:
@@ -116,7 +116,7 @@ components:
           description: Message to send. A SMS message can contains up to 160 characters
           maxLength: 160
       required:
-        - number
+        - phoneNumber
         - message
 
     SendMessageResponse:
@@ -133,9 +133,13 @@ components:
           type: string
           description: |
             Phone number in the [E164](https://en.wikipedia.org/wiki/E.164) format
-        locale:
+        language:
           type: string
-          description: Locale of the message to send to user
+          description: |
+            2 letter code of the language ([ISO 659-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)).
+            Ex: `en`, `fr`
+          default: en
+          maxLength: 2
       required:
         - number
 
@@ -145,5 +149,5 @@ components:
         id:
           type: integer
           format: int64
-          description: Verification message identifier
+          description: Verification request identifier
 

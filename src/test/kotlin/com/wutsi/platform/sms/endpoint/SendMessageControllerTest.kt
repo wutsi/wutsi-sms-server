@@ -39,7 +39,7 @@ public class SendMessageControllerTest : AbstractSecuredController() {
     override fun setUp() {
         super.setUp()
         url = "http://localhost:$port/v1/sms/messages"
-        rest = createResTemplate(listOf("sms-delivery"))
+        rest = createResTemplate(listOf("sms-send"))
     }
 
     @Test

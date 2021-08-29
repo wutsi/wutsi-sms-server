@@ -24,7 +24,7 @@ public class ValidateVerificationControllerTest : AbstractSecuredController() {
     @Autowired
     lateinit var dao: VerificationRepository
 
-    var rest = createResTemplate(listOf("sms-verification"))
+    var rest = createResTemplate(listOf("sms-verify"))
 
     @Test
     public fun `verify happy path`() {
