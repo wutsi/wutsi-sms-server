@@ -21,17 +21,18 @@ class SMSService(
 
     @Transactional
     fun sendVerification(id: Long) {
-        val verif = dao.findById(id).get()
+        val verification = dao.findById(id).get()
         val now = OffsetDateTime.now()
-        if (now.isAfter(verif.expires)) {
-            LOGGER.info("Verification#${verif.id} has expired since ${verif.expires}")
+        if (now.isAfter(verification.expires)) {
+            LOGGER.info("Verification#${verification.id} has expired since ${verification.expires}")
         } else {
-            LOGGER.info("Sending verification code to ${verif.phoneNumber}")
-            verif.messageId = sms.send(
-                phoneNumber = verif.phoneNumber,
-                message = messageSource.getMessage("verification_message", arrayOf(verif.code), Locale(verif.language))
+            verification.messageId = sms.send(
+                phoneNumber = verification.phoneNumber,
+                message = messageSource.getMessage("verification_message", arrayOf(verification.code), Locale(verification.language))
             )
-            dao.save(verif)
+            dao.save(verification)
+
+            LOGGER.info("Verification code sent to ${verification.phoneNumber}. messageId=${verification.messageId}")
         }
     }
 }
