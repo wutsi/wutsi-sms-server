@@ -19,8 +19,9 @@ wutsi:
           region: us-east-1
   platform:
     security:
-      type: "jwt"
+      type: jwt
     stream:
+      type: rabbitmq
       rabbitmq:
         url: ${CLOUDAMQP_URL}
 
