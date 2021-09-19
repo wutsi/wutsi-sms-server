@@ -5,6 +5,7 @@ import com.wutsi.platform.core.error.ErrorResponse
 import com.wutsi.platform.sms.dao.VerificationRepository
 import com.wutsi.platform.sms.entity.VerificationStatus
 import com.wutsi.platform.sms.util.ErrorURN
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.client.HttpStatusCodeException
+import org.springframework.web.client.RestTemplate
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -24,7 +26,13 @@ public class ValidateVerificationControllerTest : AbstractSecuredController() {
     @Autowired
     lateinit var dao: VerificationRepository
 
-    var rest = createResTemplate(listOf("sms-verify"))
+    lateinit var rest: RestTemplate
+
+    @BeforeEach
+    override fun setUp() {
+        super.setUp()
+        rest = createResTemplate(listOf("sms-verify"))
+    }
 
     @Test
     public fun `verify happy path`() {

@@ -20,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.client.HttpStatusCodeException
+import org.springframework.web.client.RestTemplate
 import java.time.Duration
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -40,12 +41,14 @@ public class SendVerificationControllerTest : AbstractSecuredController() {
     @MockBean
     lateinit var eventStream: EventStream
 
-    var rest = createResTemplate(listOf("sms-verify"))
+    lateinit var rest: RestTemplate
 
     @BeforeEach
     override fun setUp() {
         super.setUp()
         url = "http://localhost:$port/v1/sms/verifications"
+
+        rest = createResTemplate(listOf("sms-verify"))
     }
 
     @Test
