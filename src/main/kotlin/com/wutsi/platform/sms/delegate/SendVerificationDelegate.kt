@@ -17,6 +17,7 @@ import com.wutsi.platform.sms.util.ErrorURN.PHONE_NUMBER_MALFORMED
 import com.wutsi.platform.sms.util.EventURN
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
+import kotlin.math.pow
 
 @Service
 public class SendVerificationDelegate(
@@ -32,7 +33,7 @@ public class SendVerificationDelegate(
                 VerificationEntity(
                     phoneNumber = util.format(phoneNumber, E164),
                     language = request.language,
-                    code = (Math.random() * 1000000).toLong().toString(),
+                    code = generateCode(6).toString(),
                     status = VerificationStatus.VERIFICATION_STATUS_PENDING,
                     created = OffsetDateTime.now(),
                     expires = OffsetDateTime.now().plusMinutes(15)
@@ -60,6 +61,15 @@ public class SendVerificationDelegate(
                 ),
                 ex
             )
+        }
+    }
+
+    private fun generateCode(length: Int): Long {
+        val factor = 10.0.pow(length.toDouble())
+        while (true) {
+            val value = (Math.random() * factor).toLong()
+            if (value.toString().length == length)
+                return value
         }
     }
 }

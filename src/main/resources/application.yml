@@ -70,9 +70,10 @@ wutsi:
       type: jwt
     cache:
       type: local
-    stream:
       name: ${wutsi.application.name}
+    stream:
       type: local
+      name: ${wutsi.application.name}
     tracing:
       client-id: ${wutsi.application.name}
       device-id-provider:
