@@ -30,7 +30,7 @@
     <kotlin.version>1.5.31</kotlin.version>
     <kotlin-mockito.version>2.2.0</kotlin-mockito.version>
     <klint.version>0.42.1</klint.version>
-    <libphonenumber.version>8.12.33</libphonenumber.version>
+    <libphonenumber.version>8.12.34</libphonenumber.version>
     <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
     <hikari-cp.version>5.0.0</hikari-cp.version>
     <postgresql.version>42.2.24</postgresql.version>
