@@ -67,6 +67,7 @@ wutsi:
     security:
       type: jwt
       api-key-provider: header
+      token-provider-type: header
     cache:
       type: local
       name: ${wutsi.application.name}

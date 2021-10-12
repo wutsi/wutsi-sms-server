@@ -35,7 +35,7 @@
     <hikari-cp.version>5.0.0</hikari-cp.version>
     <postgresql.version>42.2.24</postgresql.version>
     <flyway.version>8.0.0</flyway.version>
-    <wutsi-platform-core.version>0.0.57</wutsi-platform-core.version>
+    <wutsi-platform-core.version>0.0.60</wutsi-platform-core.version>
   </properties>
 
   <dependencies>
