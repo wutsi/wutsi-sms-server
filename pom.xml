@@ -33,7 +33,7 @@
     <libphonenumber.version>8.12.35</libphonenumber.version>
     <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
     <hikari-cp.version>5.0.0</hikari-cp.version>
-    <postgresql.version>42.2.24</postgresql.version>
+    <postgresql.version>42.3.0</postgresql.version>
     <flyway.version>8.0.2</flyway.version>
     <wutsi-platform-core.version>0.0.61</wutsi-platform-core.version>
   </properties>
