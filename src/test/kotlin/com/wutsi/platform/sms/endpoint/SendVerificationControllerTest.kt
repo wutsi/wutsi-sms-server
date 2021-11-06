@@ -1,16 +1,17 @@
 package com.wutsi.platform.sms.endpoint
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.verify
 import com.wutsi.platform.core.error.ErrorResponse
-import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.platform.sms.dao.VerificationRepository
 import com.wutsi.platform.sms.dto.SendMessageResponse
 import com.wutsi.platform.sms.dto.SendVerificationRequest
 import com.wutsi.platform.sms.dto.SendVerificationResponse
 import com.wutsi.platform.sms.entity.VerificationStatus
+import com.wutsi.platform.sms.service.gateway.SMSGateway
 import com.wutsi.platform.sms.util.ErrorURN
-import com.wutsi.platform.sms.util.EventURN
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -39,7 +40,7 @@ public class SendVerificationControllerTest : AbstractSecuredController() {
     lateinit var dao: VerificationRepository
 
     @MockBean
-    lateinit var eventStream: EventStream
+    lateinit var sms: SMSGateway
 
     lateinit var rest: RestTemplate
 
@@ -69,7 +70,7 @@ public class SendVerificationControllerTest : AbstractSecuredController() {
         assertEquals(15, Duration.between(obj.created, obj.expires).toMinutes())
         assertNull(obj.verified)
 
-        verify(eventStream).enqueue(EventURN.VERIFICATION_TO_SEND.urn, mapOf("id" to response.body.id))
+        verify(sms).send(eq("+23774511111"), any())
     }
 
     @Test

@@ -71,11 +71,9 @@ wutsi:
       token-provider:
         type: header
     cache:
-      type: local
-      name: ${wutsi.application.name}
+      type: none
     stream:
-      type: local
-      name: ${wutsi.application.name}
+      type: none
     tracing:
       client-id: ${wutsi.application.name}
       device-id-provider:

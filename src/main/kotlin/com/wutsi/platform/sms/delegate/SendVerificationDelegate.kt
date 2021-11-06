@@ -7,14 +7,13 @@ import com.wutsi.platform.core.error.Error
 import com.wutsi.platform.core.error.Parameter
 import com.wutsi.platform.core.error.ParameterType.PARAMETER_TYPE_PAYLOAD
 import com.wutsi.platform.core.error.exception.BadRequestException
-import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.platform.sms.dao.VerificationRepository
 import com.wutsi.platform.sms.dto.SendVerificationRequest
 import com.wutsi.platform.sms.dto.SendVerificationResponse
 import com.wutsi.platform.sms.entity.VerificationEntity
 import com.wutsi.platform.sms.entity.VerificationStatus
+import com.wutsi.platform.sms.service.SMSService
 import com.wutsi.platform.sms.util.ErrorURN.PHONE_NUMBER_MALFORMED
-import com.wutsi.platform.sms.util.EventURN
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
 import kotlin.math.pow
@@ -22,7 +21,7 @@ import kotlin.math.pow
 @Service
 public class SendVerificationDelegate(
     private val dao: VerificationRepository,
-    private val eventStream: EventStream
+    private val sms: SMSService
 ) {
     public fun invoke(request: SendVerificationRequest): SendVerificationResponse {
         try {
@@ -41,10 +40,7 @@ public class SendVerificationDelegate(
             )
 
             /* Push message */
-            eventStream.enqueue(
-                type = EventURN.VERIFICATION_TO_SEND.urn,
-                payload = mapOf("id" to verification.id)
-            )
+            sms.sendVerification(verification.id!!)
 
             return SendVerificationResponse(
                 id = verification.id ?: -1
