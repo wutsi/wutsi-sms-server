@@ -24,17 +24,17 @@
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
     <jdk.version>11</jdk.version>
 
-    <aws-sdk.version>1.12.105</aws-sdk.version>
+    <aws-sdk.version>1.12.110</aws-sdk.version>
     <javax-validation.version>2.0.1.Final</javax-validation.version>
     <junit.version>5.8.1</junit.version>
-    <kotlin.version>1.5.31</kotlin.version>
+    <kotlin.version>1.6.0</kotlin.version>
     <kotlin-mockito.version>2.2.0</kotlin-mockito.version>
     <klint.version>0.43.0</klint.version>
-    <libphonenumber.version>8.12.36</libphonenumber.version>
+    <libphonenumber.version>8.12.37</libphonenumber.version>
     <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
     <hikari-cp.version>5.0.0</hikari-cp.version>
     <postgresql.version>42.3.1</postgresql.version>
-    <flyway.version>8.0.3</flyway.version>
+    <flyway.version>8.0.4</flyway.version>
     <wutsi-platform-core.version>0.0.61</wutsi-platform-core.version>
   </properties>
 
