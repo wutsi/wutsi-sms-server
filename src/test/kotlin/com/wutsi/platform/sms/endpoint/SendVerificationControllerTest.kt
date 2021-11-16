@@ -2,8 +2,10 @@ package com.wutsi.platform.sms.endpoint
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.platform.core.error.ErrorResponse
 import com.wutsi.platform.sms.dao.VerificationRepository
 import com.wutsi.platform.sms.dto.SendMessageResponse
@@ -23,6 +25,7 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 import java.time.Duration
+import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -49,17 +52,21 @@ public class SendVerificationControllerTest : AbstractSecuredController() {
         super.setUp()
         url = "http://localhost:$port/v1/sms/verifications"
 
+        doReturn(UUID.randomUUID().toString()).whenever(sms).send(any(), any())
+
         rest = createResTemplate(listOf("sms-verify"))
     }
 
     @Test
     public fun `send verification request`() {
+        // WHEN
         val request = SendVerificationRequest(
             phoneNumber = "+23774511111",
             language = "en"
         )
         val response = rest.postForEntity(url, request, SendVerificationResponse::class.java)
 
+        // THEN
         assertEquals(200, response.statusCodeValue)
         val obj = dao.findById(response.body.id).get()
         assertEquals(request.phoneNumber, obj.phoneNumber)
