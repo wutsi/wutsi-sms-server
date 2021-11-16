@@ -22,7 +22,8 @@ public class SendMessageDelegate(
     private val logger: KVLogger
 ) {
     public fun invoke(request: SendMessageRequest): SendMessageResponse {
-        logger.add("sms_phone_number", request.phoneNumber)
+        logger.add("phone_number", request.phoneNumber)
+        logger.add("message", request.message)
 
         try {
             val util = PhoneNumberUtil.getInstance()
@@ -31,8 +32,8 @@ public class SendMessageDelegate(
                 phoneNumber = util.format(phoneNumber, E164),
                 message = request.message
             )
+            logger.add("msm_id", messageId)
 
-            logger.add("sms_message_id", messageId)
             return SendMessageResponse(
                 id = messageId
             )

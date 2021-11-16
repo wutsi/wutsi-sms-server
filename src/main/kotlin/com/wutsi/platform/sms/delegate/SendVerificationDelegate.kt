@@ -7,6 +7,7 @@ import com.wutsi.platform.core.error.Error
 import com.wutsi.platform.core.error.Parameter
 import com.wutsi.platform.core.error.ParameterType.PARAMETER_TYPE_PAYLOAD
 import com.wutsi.platform.core.error.exception.BadRequestException
+import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.sms.dao.VerificationRepository
 import com.wutsi.platform.sms.dto.SendVerificationRequest
 import com.wutsi.platform.sms.dto.SendVerificationResponse
@@ -21,9 +22,12 @@ import kotlin.math.pow
 @Service
 public class SendVerificationDelegate(
     private val dao: VerificationRepository,
-    private val sms: SMSService
+    private val sms: SMSService,
+    private val logger: KVLogger,
 ) {
     public fun invoke(request: SendVerificationRequest): SendVerificationResponse {
+        logger.add("phone_number", request.phoneNumber)
+        logger.add("language", request.language)
         try {
             /* Save */
             val util = PhoneNumberUtil.getInstance()
@@ -41,9 +45,12 @@ public class SendVerificationDelegate(
 
             /* Push message */
             sms.sendVerification(verification.id!!)
+            logger.add("verification_id", verification.id)
+            logger.add("verification_code", verification.code)
+            logger.add("sms_id", verification.messageId)
 
             return SendVerificationResponse(
-                id = verification.id ?: -1
+                id = verification.id
             )
         } catch (ex: NumberParseException) {
             throw BadRequestException(
