@@ -4,13 +4,10 @@ import com.auth0.jwt.interfaces.RSAKeyProvider
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
-import com.wutsi.platform.core.security.ApiKeyProvider
 import com.wutsi.platform.core.security.SubjectType
 import com.wutsi.platform.core.security.SubjectType.USER
-import com.wutsi.platform.core.security.spring.SpringApiKeyRequestInterceptor
 import com.wutsi.platform.core.security.spring.SpringAuthorizationRequestInterceptor
 import com.wutsi.platform.core.security.spring.jwt.JWTBuilder
-import com.wutsi.platform.core.test.TestApiKeyProvider
 import com.wutsi.platform.core.test.TestRSAKeyProvider
 import com.wutsi.platform.core.test.TestTokenProvider
 import com.wutsi.platform.core.test.TestTracingContext
@@ -28,7 +25,6 @@ import java.util.Base64
 abstract class AbstractSecuredController {
     private lateinit var keyProvider: RSAKeyProvider
     private lateinit var tracingContext: TracingContext
-    private lateinit var apiKeyProvider: ApiKeyProvider
 
     @MockBean
     lateinit var securityApi: WutsiSecurityApi
@@ -36,7 +32,6 @@ abstract class AbstractSecuredController {
     @BeforeEach
     open fun setUp() {
         tracingContext = TestTracingContext()
-        apiKeyProvider = TestApiKeyProvider("00000000-00000000-00000000-00000000")
         keyProvider = TestRSAKeyProvider()
 
         val key = Key(
@@ -67,7 +62,6 @@ abstract class AbstractSecuredController {
 
         rest.interceptors.add(SpringTracingRequestInterceptor(tracingContext))
         rest.interceptors.add(SpringAuthorizationRequestInterceptor(tokenProvider))
-        rest.interceptors.add(SpringApiKeyRequestInterceptor(apiKeyProvider))
         return rest
     }
 }
