@@ -40,6 +40,20 @@ internal class SMSGatewayAWSTest {
     }
 
     @Test
+    fun `send message with accent`() {
+        doReturn(PublishResult().withMessageId("111")).whenever(amazonSNS).publish(any())
+
+        val messageId = gateway.send("+23774511100", "Wutsi: Vous avez reçu un paiement de Hervé")
+
+        val request = argumentCaptor<PublishRequest>()
+        verify(amazonSNS).publish(request.capture())
+
+        assertEquals("111", messageId)
+        assertEquals("+23774511100", request.firstValue.phoneNumber)
+        assertEquals("Wutsi: Vous avez recu un paiement de Herve", request.firstValue.message)
+    }
+
+    @Test
     fun `send message with error`() {
         doThrow(RuntimeException::class).whenever(amazonSNS).publish(any())
 
