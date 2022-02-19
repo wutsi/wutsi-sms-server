@@ -24,7 +24,7 @@
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
     <jdk.version>11</jdk.version>
 
-    <aws-sdk.version>1.12.158</aws-sdk.version>
+    <aws-sdk.version>1.12.161</aws-sdk.version>
     <javax-validation.version>2.0.1.Final</javax-validation.version>
     <junit.version>5.8.2</junit.version>
     <kotlin.version>1.6.10</kotlin.version>
