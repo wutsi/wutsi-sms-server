@@ -27,7 +27,7 @@
     <aws-sdk.version>1.12.205</aws-sdk.version>
     <javax-validation.version>2.0.1.Final</javax-validation.version>
     <junit.version>5.8.2</junit.version>
-    <kotlin.version>1.6.20</kotlin.version>
+    <kotlin.version>1.6.21</kotlin.version>
     <kotlin-mockito.version>2.2.0</kotlin-mockito.version>
     <klint.version>0.43.2</klint.version>
     <libphonenumber.version>8.12.47</libphonenumber.version>
