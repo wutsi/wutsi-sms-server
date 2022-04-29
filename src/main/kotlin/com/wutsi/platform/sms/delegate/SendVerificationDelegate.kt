@@ -15,19 +15,21 @@ import com.wutsi.platform.sms.entity.VerificationEntity
 import com.wutsi.platform.sms.entity.VerificationStatus
 import com.wutsi.platform.sms.service.SMSService
 import com.wutsi.platform.sms.util.ErrorURN.PHONE_NUMBER_MALFORMED
+import com.wutsi.platform.tenant.dto.Tenant
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
 import kotlin.math.pow
 
 @Service
-public class SendVerificationDelegate(
+class SendVerificationDelegate(
     private val dao: VerificationRepository,
     private val sms: SMSService,
     private val logger: KVLogger,
-) {
-    public fun invoke(request: SendVerificationRequest): SendVerificationResponse {
+) : AbstractDelegate() {
+    fun invoke(request: SendVerificationRequest): SendVerificationResponse {
         logger.add("phone_number", request.phoneNumber)
         logger.add("language", request.language)
+
         try {
             /* Save */
             val util = PhoneNumberUtil.getInstance()
@@ -42,15 +44,19 @@ public class SendVerificationDelegate(
                     expires = OffsetDateTime.now().plusMinutes(15)
                 )
             )
-
-            /* Push message */
-            sms.sendVerification(verification.id!!)
             logger.add("verification_id", verification.id)
             logger.add("verification_code", verification.code)
             logger.add("sms_id", verification.messageId)
 
+            /* Push message */
+            val testUser = isTestUser(request.phoneNumber)
+            logger.add("test_user", testUser)
+            if (!testUser) {
+                sms.sendVerification(verification.id!!)
+            }
+
             return SendVerificationResponse(
-                id = verification.id
+                id = verification.id ?: -1
             )
         } catch (ex: NumberParseException) {
             throw BadRequestException(
@@ -75,4 +81,7 @@ public class SendVerificationDelegate(
                 return value
         }
     }
+
+    private fun isTestUser(phoneNumber: String, tenant: Tenant): Boolean =
+        tenant.testPhoneNumbers.contains(phoneNumber)
 }

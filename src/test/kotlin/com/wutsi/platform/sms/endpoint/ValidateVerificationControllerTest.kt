@@ -19,9 +19,9 @@ import kotlin.test.assertNotNull
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = ["/db/clean.sql", "/db/ValidateVerificationController.sql"])
-public class ValidateVerificationControllerTest : AbstractSecuredController() {
+class ValidateVerificationControllerTest : AbstractSecuredController() {
     @LocalServerPort
-    public val port: Int = 0
+    val port: Int = 0
 
     @Autowired
     lateinit var dao: VerificationRepository
@@ -35,9 +35,10 @@ public class ValidateVerificationControllerTest : AbstractSecuredController() {
     }
 
     @Test
-    public fun `verify happy path`() {
+    fun `verify happy path`() {
         val url = "http://localhost:$port/v1/sms/verifications/100?code=000000"
         val response = rest.getForEntity(url, Any::class.java)
+
         assertEquals(200, response.statusCodeValue)
 
         val obj = dao.findById(100).get()
@@ -46,11 +47,24 @@ public class ValidateVerificationControllerTest : AbstractSecuredController() {
     }
 
     @Test
-    public fun `verify - code mismatch`() {
+    fun `verify test user-id`() {
+        val url = "http://localhost:$port/v1/sms/verifications/200?code=999999999"
+        val response = rest.getForEntity(url, Any::class.java)
+
+        assertEquals(200, response.statusCodeValue)
+
+        val obj = dao.findById(200).get()
+        assertNotNull(obj.verified)
+        assertEquals(VerificationStatus.VERIFICATION_STATUS_VERIFIED, obj.status)
+    }
+
+    @Test
+    fun `verify - code mismatch`() {
         val url = "http://localhost:$port/v1/sms/verifications/101?code=xxx"
         val ex = assertThrows<HttpStatusCodeException> {
             rest.getForEntity(url, Any::class.java)
         }
+
         assertEquals(409, ex.rawStatusCode)
 
         val response = ObjectMapper().readValue(ex.responseBodyAsByteArray, ErrorResponse::class.java)
@@ -58,7 +72,7 @@ public class ValidateVerificationControllerTest : AbstractSecuredController() {
     }
 
     @Test
-    public fun `verify - invalid ID`() {
+    fun `verify - invalid ID`() {
         val url = "http://localhost:$port/v1/sms/verifications/999999?code=xxx"
         val ex = assertThrows<HttpStatusCodeException> {
             rest.getForEntity(url, Any::class.java)
@@ -70,7 +84,7 @@ public class ValidateVerificationControllerTest : AbstractSecuredController() {
     }
 
     @Test
-    public fun `verify - already verified`() {
+    fun `verify - already verified`() {
         val url = "http://localhost:$port/v1/sms/verifications/102?code=xxx"
         val ex = assertThrows<HttpStatusCodeException> {
             rest.getForEntity(url, Any::class.java)
@@ -82,7 +96,7 @@ public class ValidateVerificationControllerTest : AbstractSecuredController() {
     }
 
     @Test
-    public fun `verify - expired`() {
+    fun `verify - expired`() {
         val url = "http://localhost:$port/v1/sms/verifications/103?code=333333"
         val ex = assertThrows<HttpStatusCodeException> {
             rest.getForEntity(url, Any::class.java)

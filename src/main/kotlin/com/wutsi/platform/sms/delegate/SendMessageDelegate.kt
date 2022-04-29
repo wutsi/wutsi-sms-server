@@ -17,23 +17,31 @@ import com.wutsi.platform.sms.util.ErrorURN
 import org.springframework.stereotype.Service
 
 @Service
-public class SendMessageDelegate(
+class SendMessageDelegate(
     private val gateway: SMSGateway,
-    private val logger: KVLogger
-) {
-    public fun invoke(request: SendMessageRequest): SendMessageResponse {
+    private val logger: KVLogger,
+) : AbstractDelegate() {
+    fun invoke(request: SendMessageRequest): SendMessageResponse {
         logger.add("phone_number", request.phoneNumber)
         logger.add("message", request.message)
 
         try {
             val util = PhoneNumberUtil.getInstance()
             val phoneNumber = util.parse(request.phoneNumber, "")
-            val messageId = gateway.send(
-                phoneNumber = util.format(phoneNumber, E164),
-                message = request.message
-            )
-            logger.add("msm_id", messageId)
+            val formattedPhoneNumber = util.format(phoneNumber, E164)
+            val testUser = isTestUser(formattedPhoneNumber)
 
+            val messageId = if (testUser)
+                "-"
+            else
+                gateway.send(
+                    phoneNumber = formattedPhoneNumber,
+                    message = request.message
+                )
+
+            logger.add("msm_id", messageId)
+            logger.add("formatted_phone_number", formattedPhoneNumber)
+            logger.add("test_user", testUser)
             return SendMessageResponse(
                 id = messageId
             )

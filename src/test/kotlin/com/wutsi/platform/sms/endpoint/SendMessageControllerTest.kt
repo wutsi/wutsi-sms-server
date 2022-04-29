@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.doThrow
+import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.platform.core.error.ErrorResponse
@@ -56,6 +57,19 @@ public class SendMessageControllerTest : AbstractSecuredController() {
         assertEquals(200, response.statusCodeValue)
         assertEquals(messageId, response.body.id)
         verify(gateway).send(request.phoneNumber, request.message)
+    }
+
+    @Test
+    fun `never send SMS to test phone numbers`() {
+        val request = SendMessageRequest(
+            phoneNumber = TEST_PHONE_NUMBER,
+            message = "Hello world"
+        )
+        val response = rest.postForEntity(url, request, SendMessageResponse::class.java)
+
+        assertEquals(200, response.statusCodeValue)
+        assertEquals("-", response.body.id)
+        verify(gateway, never()).send(any(), any())
     }
 
     @Test

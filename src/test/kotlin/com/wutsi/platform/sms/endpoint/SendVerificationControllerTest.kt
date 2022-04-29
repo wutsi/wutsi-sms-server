@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.platform.core.error.ErrorResponse
@@ -78,6 +79,29 @@ public class SendVerificationControllerTest : AbstractSecuredController() {
         assertNull(obj.verified)
 
         verify(sms).send(eq("+23774511111"), any())
+    }
+
+    @Test
+    public fun `never send verification to test phone number`() {
+        // WHEN
+        val request = SendVerificationRequest(
+            phoneNumber = TEST_PHONE_NUMBER,
+            language = "en"
+        )
+        val response = rest.postForEntity(url, request, SendVerificationResponse::class.java)
+
+        // THEN
+        assertEquals(200, response.statusCodeValue)
+        val obj = dao.findById(response.body.id).get()
+        assertEquals(request.phoneNumber, obj.phoneNumber)
+        assertEquals(request.language, obj.language)
+        assertTrue(obj.code.length == 6)
+        assertNotNull(obj.created)
+        assertEquals(VerificationStatus.VERIFICATION_STATUS_PENDING, obj.status)
+        assertEquals(15, Duration.between(obj.created, obj.expires).toMinutes())
+        assertNull(obj.verified)
+
+        verify(sms, never()).send(any(), any())
     }
 
     @Test
