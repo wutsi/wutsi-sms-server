@@ -4,6 +4,7 @@ import com.wutsi.platform.core.error.Error
 import com.wutsi.platform.core.error.Parameter
 import com.wutsi.platform.core.error.ParameterType.PARAMETER_TYPE_PATH
 import com.wutsi.platform.core.error.exception.ConflictException
+import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.sms.dao.VerificationRepository
 import com.wutsi.platform.sms.entity.VerificationStatus.VERIFICATION_STATUS_VERIFIED
 import com.wutsi.platform.sms.util.ErrorURN
@@ -14,6 +15,7 @@ import javax.transaction.Transactional
 @Service
 class ValidateVerificationDelegate(
     private val dao: VerificationRepository,
+    private val logger: KVLogger,
 ) : AbstractDelegate() {
     @Transactional
     fun invoke(id: Long, code: String) {
@@ -28,19 +30,24 @@ class ValidateVerificationDelegate(
                     )
                 )
             }
+        logger.add("phone_number", verification.phoneNumber)
+        logger.add("expires", verification.expires)
 
         val now = OffsetDateTime.now()
         if (now.isAfter(verification.expires)) {
             throw failure(ErrorURN.VERIFICATION_EXPIRED)
         } else if (verification.status == VERIFICATION_STATUS_VERIFIED) {
             throw failure(ErrorURN.VERIFICATION_ALREADY_VERIFIED)
-        } else if (code != verification.code && !isTestUser(verification.phoneNumber)) {
-            throw failure(ErrorURN.VERIFICATION_FAILED)
-        } else {
-            verification.status = VERIFICATION_STATUS_VERIFIED
-            verification.verified = now
-            dao.save(verification)
+        } else if (code != verification.code) {
+            val testUser = isTestUser(verification.phoneNumber)
+            logger.add("test_user", testUser)
+            if (!testUser)
+                throw failure(ErrorURN.VERIFICATION_FAILED)
         }
+
+        verification.status = VERIFICATION_STATUS_VERIFIED
+        verification.verified = now
+        dao.save(verification)
     }
 
     private fun failure(code: ErrorURN, parameter: Parameter? = null) =
