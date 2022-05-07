@@ -46,6 +46,11 @@
       <artifactId>wutsi-platform-core</artifactId>
       <version>${wutsi-platform-core.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.wutsi.platform.tenant</groupId>
+      <artifactId>wutsi-tenant-sdk-kotlin</artifactId>
+      <version>${wutsi-tenant.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>com.amazonaws</groupId>
