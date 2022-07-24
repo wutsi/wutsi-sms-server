@@ -63,21 +63,14 @@ wutsi:
     sms:
       gateway:
         type: none
+    verification:
+      expiry-minutes: 5
   platform:
     security:
       type: jwt
-      api-key-provider:
-        type: header
-      token-provider:
-        type: header
-    cache:
-      type: none
-    stream:
-      type: none
+      api-key: "----"
     tracing:
       client-id: ${wutsi.application.name}
-      device-id-provider:
-        type: header
 
 logging:
   level:

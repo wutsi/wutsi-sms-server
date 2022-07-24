@@ -21,7 +21,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
@@ -34,9 +34,9 @@ import kotlin.test.assertTrue
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = ["/db/clean.sql"])
-public class SendVerificationControllerTest : AbstractSecuredController() {
+class SendVerificationControllerTest : AbstractSecuredController() {
     @LocalServerPort
-    public val port: Int = 0
+    val port: Int = 0
 
     lateinit var url: String
 
@@ -59,7 +59,7 @@ public class SendVerificationControllerTest : AbstractSecuredController() {
     }
 
     @Test
-    public fun `send verification request`() {
+    fun `send verification request`() {
         // WHEN
         val request = SendVerificationRequest(
             phoneNumber = "+23774511111",
@@ -75,14 +75,14 @@ public class SendVerificationControllerTest : AbstractSecuredController() {
         assertTrue(obj.code.length == 6)
         assertNotNull(obj.created)
         assertEquals(VerificationStatus.VERIFICATION_STATUS_PENDING, obj.status)
-        assertEquals(15, Duration.between(obj.created, obj.expires).toMinutes())
+        assertEquals(5, Duration.between(obj.created, obj.expires).toMinutes())
         assertNull(obj.verified)
 
         verify(sms).send(eq("+23774511111"), any())
     }
 
     @Test
-    public fun `never send verification to test phone number`() {
+    fun `never send verification to test phone number`() {
         // WHEN
         val request = SendVerificationRequest(
             phoneNumber = TEST_PHONE_NUMBER,
@@ -98,14 +98,14 @@ public class SendVerificationControllerTest : AbstractSecuredController() {
         assertTrue(obj.code.length == 6)
         assertNotNull(obj.created)
         assertEquals(VerificationStatus.VERIFICATION_STATUS_PENDING, obj.status)
-        assertEquals(15, Duration.between(obj.created, obj.expires).toMinutes())
+        assertEquals(5, Duration.between(obj.created, obj.expires).toMinutes())
         assertNull(obj.verified)
 
         verify(sms, never()).send(any(), any())
     }
 
     @Test
-    public fun `send verification request with invalid number`() {
+    fun `send verification request with invalid number`() {
         val request = SendVerificationRequest(
             phoneNumber = "00000",
             language = "en"
@@ -121,7 +121,7 @@ public class SendVerificationControllerTest : AbstractSecuredController() {
     }
 
     @Test
-    public fun `send verification request with invalid scope`() {
+    fun `send verification request with invalid scope`() {
         val request = SendVerificationRequest(
             phoneNumber = "+23774511111",
             language = "en"

@@ -16,6 +16,7 @@ import com.wutsi.platform.sms.entity.VerificationStatus
 import com.wutsi.platform.sms.service.SMSService
 import com.wutsi.platform.sms.util.ErrorURN.PHONE_NUMBER_MALFORMED
 import com.wutsi.platform.tenant.dto.Tenant
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
 import kotlin.math.pow
@@ -25,6 +26,7 @@ class SendVerificationDelegate(
     private val dao: VerificationRepository,
     private val sms: SMSService,
     private val logger: KVLogger,
+    @Value("\${wutsi.application.verification.expiry-minutes}") private val expiryMinutes: Long,
 ) : AbstractDelegate() {
     fun invoke(request: SendVerificationRequest): SendVerificationResponse {
         logger.add("phone_number", request.phoneNumber)
@@ -41,7 +43,7 @@ class SendVerificationDelegate(
                     code = generateCode(6).toString(),
                     status = VerificationStatus.VERIFICATION_STATUS_PENDING,
                     created = OffsetDateTime.now(),
-                    expires = OffsetDateTime.now().plusMinutes(15)
+                    expires = OffsetDateTime.now().plusMinutes(expiryMinutes)
                 )
             )
             logger.add("verification_id", verification.id)
