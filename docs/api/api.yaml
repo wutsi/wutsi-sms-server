@@ -137,7 +137,6 @@ components:
           type: string
           description: |
             2 letter code of the language ([ISO 659-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)).
-            Ex: `en`, `fr`
           default: en
           maxLength: 2
       required:

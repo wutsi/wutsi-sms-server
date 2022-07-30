@@ -9,5 +9,5 @@ public data class SendMessageRequest(
     public val phoneNumber: String = "",
     @get:NotBlank
     @get:Size(max = 160)
-    public val message: String = ""
+    public val message: String = "",
 )
