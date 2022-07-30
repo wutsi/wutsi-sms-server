@@ -37,7 +37,7 @@
     <flyway.version>8.5.13</flyway.version>
 
     <wutsi-security.version>0.0.23</wutsi-security.version>
-    <wutsi-platform-core.version>0.0.120</wutsi-platform-core.version>
+    <wutsi-platform-core.version>0.0.122</wutsi-platform-core.version>
     <wutsi-tenant.version>0.0.50</wutsi-tenant.version>
   </properties>
 
